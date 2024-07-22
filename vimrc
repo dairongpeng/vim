@@ -61,11 +61,11 @@ let g:go_highlight_fold_enable = 1 " zo展开 zc折叠 zR展开所有 zM折叠�
 
 " NerdTree
 " 显示或隐藏目录
-nnoremap <leader>nn :NERDTreeToggle<CR>
-" 为某个文件或者文件夹加书签，D删除书签
-nnoremap <leader>nb :NERDTreeFromBookmark<CR>
+nnoremap <leader>nc :NERDTreeToggle<CR>
 " 打开目录，并定位到当前文件
-nnoremap <leader>nf :NERDTreeFind<CR>
+nnoremap <leader>ni :NERDTreeFind<CR>
+" 切换窗口焦点到NerdTree窗口
+nnoremap <leader>nb :NERDTreeFocus<CR>
 
 " fzf and vim-rooter
 " 当前项目内全局查找关键字
