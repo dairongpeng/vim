@@ -16,6 +16,8 @@ call plug#end()
 nnoremap <SPACE> <Nop>
 map <Space> <Leader>
 
+set backspace=indent,eol,start
+
 " 通用
 set autowrite " 自动保存
 set laststatus=2 " 始终显示状态栏
