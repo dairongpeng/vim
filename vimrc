@@ -16,15 +16,15 @@ call plug#end()
 nnoremap <SPACE> <Nop>
 map <Space> <Leader>
 
-set backspace=indent,eol,start
+" 通用配置
+set backspace=indent,eol,start " 配置回退键在插入模式的行为
+let g:indentLine_enabled = 1 " 设置缩进对齐
 
-" 通用
 set autowrite " 自动保存
 set laststatus=2 " 始终显示状态栏
 set statusline=%F\ %l,%c " 控制状态栏显示文件名，行号和列号
 autocmd filetype go inoremap <buffer> . .<C-x><C-o>
-" 显示行号
-nnoremap <leader>sn :set number!<CR>
+nnoremap <leader>sn :set number!<CR> " 显示行号
 set autoindent " 设置自动缩进
 set confirm " 在处理未保存或只读文件时，弹出确认
 set history=1000 " 设置历史记录步数
@@ -33,7 +33,6 @@ set shiftwidth=4 " 设置自动缩进长度为4空格
 set expandtab " vim自动将输入的制表符替换为缩进的空格数
 autocmd BufWritePre *.go :silent! GoFmt " 保存文件时自动fmt go代码
 
-" 代码折叠
 set foldmethod=indent " 按代码缩进
 let g:go_fmt_experimental = 1 " 支持go代码折叠
 set foldlevel=0 " 默认折叠第0级
@@ -62,25 +61,38 @@ let g:go_highlight_functions_buildin = 1
 let g:go_highlight_fold_enable = 1 " zo展开 zc折叠 zR展开所有 zM折叠所有
 
 " NerdTree
-" 显示或隐藏目录
-nnoremap <leader>nc :NERDTreeToggle<CR>
-" 打开目录，并定位到当前文件
-nnoremap <leader>ni :NERDTreeFind<CR>
-" 切换窗口焦点到NerdTree窗口
-nnoremap <leader>nb :NERDTreeFocus<CR>
+nnoremap <leader>nc :NERDTreeToggle<CR> " 显示或隐藏目录
+nnoremap <leader>ni :NERDTreeFind<CR> " 打开目录，并定位到当前文件
+nnoremap <leader>nb :NERDTreeFocus<CR> " 切换窗口焦点到NerdTree窗口
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+let NERDTreeShowHidden=1
 
-" fzf and vim-rooter
-" 当前项目内全局查找关键字
-nnoremap <leader>f :RG<cr>
-" nnoremap <leader>gf :GF<cr>
-" 查看最近打开的文件和打开的缓冲区
-nnoremap <leader>r :History<cr>
-" 查看打开的缓冲区
-nnoremap <leader>j :Buffers<cr>
-" 当前项目内查找文件
-nnoremap <leader>k :Files<cr>
-" 当前项目下查找Tag
-nnoremap <leader>l :Tags<cr>
+" fzf and vim-rooter and 模糊查找函数
+nnoremap <leader>fg :RG<cr> " 当前项目内全局查找关键字
+nnoremap <leader>fh :History<cr> " 查看最近打开的文件和打开的缓冲区
+nnoremap <leader>fb :Buffers<cr> " 查看打开的缓冲区
+nnoremap <leader>ff :Files<cr> " 当前项目内查找文件
+nnoremap <leader>ft :Tags<cr> " 当前项目下查找Tag
+let g:fzf_preview_window = ['hidden,right,50%,<70(up,40%)', 'ctrl-/']
+let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'highlight': 'Todo', 'border': 'rounded' } }
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+" [[B]Commits] Customize the options used by 'git log':
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+" [Tags] Command to generate tags file
+let g:fzf_tags_command = 'ctags -R'
+let $FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git/**'"
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 " Git
 nnoremap <leader>gb :Git blame<cr>
@@ -122,13 +134,6 @@ nnoremap <S-C> :GoCallers<cr>
 " 按下Shift+H时，会启用/禁用相同标识符的突出显示
 nnoremap <S-H> :GoSameIdsToggle<cr>
 
-let g:fzf_preview_window = ['hidden,right,50%,<70(up,40%)', 'ctrl-/']
-" [Buffers] Jump to the existing window if possible
-let g:fzf_buffers_jump = 1
-" [[B]Commits] Customize the options used by 'git log':
-let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
-" [Tags] Command to generate tags file
-let g:fzf_tags_command = 'ctags -R'
 
 " 自动命令组go, 使用autocmd!可以确保已经存在的autocmd不会被覆盖
 augroup go
