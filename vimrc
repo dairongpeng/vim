@@ -33,11 +33,9 @@ set shiftwidth=4 " 设置自动缩进长度为4空格
 set expandtab " vim自动将输入的制表符替换为缩进的空格数
 autocmd BufWritePre *.go :silent! GoFmt " 保存文件时自动fmt go代码
 
-set foldmethod=indent " 按代码缩进
-let g:go_fmt_experimental = 1 " 支持go代码折叠
-set foldlevel=0 " 默认折叠第0级
+set foldmethod=syntax " 按代码缩进: indent(python), syntax(golang)
+set foldlevel=99 " 默认第n级开始折叠
 syntax on
-set re=0 " 折叠不影响高亮
 
 " 主题配色
 syntax enable
